@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EDITORMUHAMAD &middot; Motion Designer</title>
+<meta name="description" content="EditorMuhamad, motion designer. Brand animation, 3D, and edits that make people stop scrolling." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+  body { margin: 0; }
+  html, body { overflow-x: hidden; }
+  img, svg { display: block; max-width: 100%; }
+  button { font: inherit; cursor: pointer; }
+  a { color: inherit; text-decoration: none; }
+  ul { margin: 0; padding: 0; list-style: none; }
+
+  :root {
+    --black: #000000;
+    --panel: #101013;
+    --panel-2: #17171B;
+    --white: #FFFFFF;
+    --grey: #8E8E96;
+    --grey-dim: #55555C;
+    --lavender: #E4E0F5;
+    --accent: #B7A9F2;
+    --green: #A3E635;
+    --red: #E5484D;
+    --line: rgba(255,255,255,0.10);
+    --line-strong: rgba(255,255,255,0.2);
+
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --edge: clamp(1.25rem, 5vw, 4rem);
+
+    --bg: #000000;
+    --pill: rgba(255,255,255,.08);
+    --glass: rgba(0,0,0,.55);
+  }
+
+  /* white mode — flipped by the switch */
+  :root[data-mode="light"] {
+    --bg: #F4F3F7;
+    --white: #121216;
+    --grey: #5A5A64;
+    --grey-dim: #9A9AA4;
+    --panel: #FFFFFF;
+    --panel-2: #ECEBF2;
+    --line: rgba(0,0,0,.12);
+    --line-strong: rgba(0,0,0,.28);
+    --pill: rgba(0,0,0,.06);
+    --glass: rgba(255,255,255,.65);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background .4s ease, color .4s ease;
+  }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 var(--edge); }
+
+  .label {
+    font-size: .72rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--grey);
+    font-weight: 500;
+  }
+
+  .hl-purple { color: var(--accent); }
+
+  /* ============ NAV ============ */
+  header.site {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.4rem var(--edge);
+    background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) 85%, transparent), transparent);
+  }
+  .logo {
+    display: inline-flex; align-items: center; gap: .6rem;
+    font-size: .85rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  }
+  .logo .avatar {
+    width: 30px; height: 30px; border-radius: 50%; overflow: hidden;
+    background: var(--lavender); flex-shrink: 0;
+  }
+  .logo .avatar img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; }
+
+  .head-right { display: flex; align-items: center; gap: .9rem; }
+
+  /* dock widget — rounded app tiles in a pill, like the reference */
+  nav.dock {
+    display: flex; align-items: center; gap: .45rem;
+    padding: .4rem .5rem;
+    border-radius: 16px;
+    background: var(--pill);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--line);
+  }
+  nav.dock a {
+    width: 38px; height: 38px; border-radius: 11px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 6px 14px -8px rgba(0,0,0,.8);
+    transition: transform .3s cubic-bezier(.2,.8,.2,1);
+  }
+  nav.dock a:hover { transform: translateY(-5px) scale(1.1); }
+  nav.dock a img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* black / white switch — glossy pill toggle like the reference */
+  .mode-switch {
+    position: relative;
+    flex-shrink: 0;
+    width: 46px; height: 25px; border-radius: 999px;
+    border: none; padding: 0;
+    background: linear-gradient(180deg, #FFFFFF, #E4E4EA);
+    box-shadow:
+      inset 0 2px 6px rgba(0,0,0,.22),
+      inset 0 -1px 2px rgba(255,255,255,.8),
+      0 5px 12px -5px rgba(0,0,0,.55);
+  }
+  .mode-switch .knob {
+    position: absolute; top: 3px; left: 3px;
+    width: 19px; height: 19px; border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, #4A4A55, #0E0E12 75%);
+    box-shadow:
+      0 3px 8px rgba(0,0,0,.45),
+      inset 0 1px 2px rgba(255,255,255,.3);
+    transition: left .35s cubic-bezier(.2,.8,.2,1), background .35s ease;
+  }
+  :root[data-mode="light"] .mode-switch .knob {
+    left: 24px;
+    background: radial-gradient(circle at 32% 28%, #D4CBF9, #7C5CFF 75%);
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    min-height: 100svh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: clamp(2rem, 4vh, 3.5rem);
+    padding: 7rem var(--edge) 4rem;
+    position: relative;
+  }
+
+  /* --- the orbit composition --- */
+  .orbit {
+    position: relative;
+    width: min(78vw, 560px);
+    aspect-ratio: 1;
+  }
+
+  .face-circle {
+    position: absolute; inset: 0; margin: auto;
+    width: 62%; aspect-ratio: 1; border-radius: 50%;
+    overflow: hidden;
+  }
+  .face-circle img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+
+  .app {
+    position: absolute;
+    width: clamp(44px, 10.5%, 60px); aspect-ratio: 1;
+    border-radius: 26%;
+    overflow: hidden;
+    box-shadow:
+      0 18px 34px -14px rgba(0,0,0,.9),
+      inset 0 1px 0 rgba(255,255,255,.07);
+    animation: float var(--dur, 5s) ease-in-out var(--delay, 0s) infinite alternate;
+    will-change: transform;
+  }
+  .app img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* positions around the face, matching the reference artwork */
+  .app.figma   { top: 2%;   left: 26%; --dur: 4.6s; --delay: -1.2s; }
+  .app.ae      { top: 9%;   right: 12%; --dur: 5.4s; --delay: -3s; }
+  .app.capcut  { top: 44%;  right: 1%;  --dur: 4.2s; --delay: -.6s; }
+  .app.blender { bottom: 8%; right: 20%; --dur: 5.8s; --delay: -2.2s; }
+  .app.cal     { bottom: 0;  left: 43%;  --dur: 5s;   --delay: -4s; }
+  .app.c4d     { bottom: 12%; left: 17%; --dur: 4.4s; --delay: -1.8s; }
+  .app.pr      { top: 36%;  left: 2%;  --dur: 5.6s; --delay: -2.6s; }
+
+  @keyframes float {
+    from { transform: translate(0, -7px) rotate(-2deg); }
+    to   { transform: translate(0, 9px) rotate(2deg); }
+  }
+
+  .hero-text { text-align: center; max-width: 40ch; margin: 0 auto; }
+  .hero-text .label { display: block; margin-bottom: 1rem; text-align: center; }
+  .hero-text h1 {
+    margin: 0;
+    font-size: clamp(1.9rem, 5vw, 3.2rem);
+    font-weight: 600; letter-spacing: -.02em; line-height: 1.15;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .hero-text h1 span { color: var(--grey); }
+  .hero-text h1 .line1,
+  .hero-text h1 .line2 {
+    white-space: nowrap;
+    text-align: center;
+    font-size: clamp(1.05rem, 5.6vw, 3.2rem);
+  }
+  .hero-text p {
+    color: var(--grey); margin: 1.1rem auto 0; max-width: 44ch; font-size: .98rem;
+  }
+
+  .scroll-cue {
+    position: absolute; bottom: 1.8rem; left: 50%; transform: translateX(-50%);
+    color: var(--grey-dim); font-size: .68rem; letter-spacing: .28em; text-transform: uppercase;
+    animation: bob 2.2s ease-in-out infinite;
+  }
+  @keyframes bob { 0%,100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, 6px); } }
+
+  /* ============ SECTIONS ============ */
+  section { padding: clamp(4.5rem, 10vw, 8rem) 0; }
+  .section-head { margin-bottom: 3rem; }
+  .section-head .label { display: block; margin-bottom: .8rem; }
+  .section-head h2 {
+    margin: 0; font-size: clamp(1.5rem, 3.4vw, 2.2rem);
+    font-weight: 600; letter-spacing: -.02em;
+  }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* masked word-rise animation (hero + section headings) */
+  .anim-text .w { display: inline-block; overflow: hidden; vertical-align: top; }
+  .anim-text .w > span {
+    display: inline-block;
+    transform: translateY(115%);
+    transition: transform .9s cubic-bezier(.2,.8,.2,1);
+    transition-delay: var(--d, 0s);
+  }
+  .anim-text.in .w > span { transform: translateY(0); }
+
+  /* ============ WORK LIST ============ */
+  .work-list { display: flex; flex-direction: column; align-items: center; gap: 2.5rem; }
+  .work-item { width: 100%; }
+
+  /* ============ CLIENTS ============ */
+  .client-grid {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 1rem;
+  }
+  .client-logo {
+    display: flex; align-items: center; justify-content: center;
+    width: 120px; height: 120px;
+    border-radius: 26px; border: 1px solid var(--line);
+    color: var(--grey);
+    transition: color .25s ease, border-color .25s ease;
+  }
+  .client-logo:hover { color: var(--white); border-color: var(--line-strong); }
+  .client-logo svg { width: 56px; height: auto; }
+  .work-video {
+    position: relative;
+    border-radius: 14px; overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    aspect-ratio: 16/9;
+    transition: transform .4s cubic-bezier(.2,.8,.2,1), border-color .3s ease;
+  }
+  .work-video:hover { transform: scale(1.01); border-color: var(--line-strong); }
+  .work-video video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .work-video .vplay {
+    position: absolute; inset: 0; margin: auto;
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(0,0,0,.55); backdrop-filter: blur(6px);
+    border: 1px solid var(--line-strong);
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .work-video .vplay svg { width: 16px; height: 16px; fill: #fff; margin-left: 2px; }
+  .work-video.playing .vplay { opacity: 0; transform: scale(.8); }
+  .work-video .vmute {
+    position: absolute; bottom: .7rem; right: .7rem;
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(0,0,0,.55); backdrop-filter: blur(6px);
+    border: 1px solid var(--line-strong); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity .3s ease;
+  }
+  .work-video.playing .vmute { opacity: 1; }
+  .work-video .vmute svg { width: 15px; height: 15px; fill: currentColor; }
+  .work-video .vmute .on { display: none; }
+  .work-video.sound .vmute .on { display: block; }
+  .work-video.sound .vmute .off { display: none; }
+
+  /* ============ WHY / 3D GALLERY ============ */
+  .why-grid {
+    display: grid; grid-template-columns: 1.05fr .95fr;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+  .gallery3d {
+    perspective: 1400px;
+    height: 320px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: visible;
+  }
+  .g3d-ring {
+    position: relative;
+    width: 300px; height: 169px;
+    transform-style: preserve-3d;
+    animation: ringspin 26s linear infinite;
+  }
+  .gallery3d:hover .g3d-ring { animation-play-state: paused; }
+  .g3d-ring img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 24px 44px -20px rgba(0,0,0,.8);
+  }
+  .g3d-ring img:nth-child(1) { transform: rotateY(0deg)   translateZ(215px); }
+  .g3d-ring img:nth-child(2) { transform: rotateY(90deg)  translateZ(215px); }
+  .g3d-ring img:nth-child(3) { transform: rotateY(180deg) translateZ(215px); }
+  .g3d-ring img:nth-child(4) { transform: rotateY(270deg) translateZ(215px); }
+  @keyframes ringspin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+
+  .why-text ul { display: flex; flex-direction: column; gap: 1.3rem; }
+  .why-text li {
+    position: relative;
+    padding-left: 1.6rem;
+    color: var(--grey); font-size: .98rem;
+  }
+  .why-text li::before {
+    content: "";
+    position: absolute; left: 0; top: .45em;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--accent);
+  }
+  .why-text li strong { color: var(--white); font-weight: 600; }
+
+  /* ============ ABOUT ============ */
+  .about-grid { display: grid; grid-template-columns: 200px 1fr; gap: 3rem; align-items: start; }
+  .about-photo {
+    width: 200px; aspect-ratio: 1; border-radius: 50%;
+    background: var(--lavender); overflow: hidden;
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .about-photo img { width: 84%; height: 84%; object-fit: contain; mix-blend-mode: multiply; transform: translateY(5%); }
+  .about-text p { color: var(--grey); margin: 0 0 1.1rem; max-width: 60ch; }
+  .about-text p strong { color: var(--white); font-weight: 600; }
+
+  .tool-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.6rem; }
+  .pill {
+    font-size: .74rem; font-weight: 500; letter-spacing: .06em;
+    padding: .45rem 1rem; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--grey);
+  }
+
+  /* ============ CONNECT / FOOTER ============ */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: clamp(4rem, 9vw, 7rem) var(--edge) 2.5rem;
+    text-align: center;
+  }
+  footer .label { display: block; margin-bottom: 1rem; }
+  footer h2 { margin: 0 0 1rem; font-size: clamp(1.6rem, 4vw, 2.6rem); font-weight: 600; letter-spacing: -.02em; }
+  footer .hello { color: var(--grey); max-width: 44ch; margin: 0 auto 2.2rem; font-size: .95rem; }
+  .connect-row { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .connect-row a {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .75rem 1.5rem; border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 600;
+    transition: all .25s ease;
+  }
+  .connect-row a:hover { background: var(--white); color: var(--bg); border-color: var(--white); }
+  .connect-row a svg { width: 14px; height: 14px; fill: currentColor; }
+  footer .fine { margin-top: 3.5rem; color: var(--grey-dim); font-size: .75rem; letter-spacing: .1em; }
+
+  .to-top {
+    position: fixed; bottom: 1.6rem; right: 1.6rem; z-index: 600;
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--glass); backdrop-filter: blur(10px);
+    border: 1px solid var(--line-strong);
+    color: var(--white);
+    opacity: 0; visibility: hidden; transform: translateY(10px);
+    transition: all .3s ease;
+  }
+  .to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+  .to-top svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .3s ease; }
+  .to-top:hover { background: var(--accent); border-color: var(--accent); color: var(--black); }
+  .to-top:hover svg { transform: translateY(-3px); }
+
+  @media (max-width: 720px) {
+    header.site { padding: .8rem 1rem; }
+    .head-right { gap: .6rem; }
+    .logo { font-size: .68rem; gap: .45rem; }
+    .logo .avatar { width: 26px; height: 26px; }
+    nav.dock { gap: .35rem; padding: .35rem .45rem; border-radius: 14px; }
+    nav.dock a { width: 34px; height: 34px; border-radius: 10px; }
+    .hero { padding-top: 5.5rem; gap: 2rem; }
+    .hero-text p { font-size: .92rem; }
+    .about-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr; }
+    .gallery3d { height: 240px; }
+    .g3d-ring { width: 220px; height: 124px; }
+    .g3d-ring img:nth-child(1) { transform: rotateY(0deg)   translateZ(160px); }
+    .g3d-ring img:nth-child(2) { transform: rotateY(90deg)  translateZ(160px); }
+    .g3d-ring img:nth-child(3) { transform: rotateY(180deg) translateZ(160px); }
+    .g3d-ring img:nth-child(4) { transform: rotateY(270deg) translateZ(160px); }
+    .to-top { width: 46px; height: 46px; bottom: 1.1rem; right: 1.1rem; }
+  }
+
+  @media (max-width: 480px) {
+    .logo span.name { display: none; }
+    .orbit { width: 86vw; }
+    .app { width: clamp(34px, 12%, 44px); }
+    .client-logo { width: 96px; height: 96px; border-radius: 22px; }
+    .client-logo svg { width: 44px; }
+    .gallery3d { height: 200px; }
+    .g3d-ring { width: 150px; height: 84px; }
+    .g3d-ring img:nth-child(1) { transform: rotateY(0deg)   translateZ(105px); }
+    .g3d-ring img:nth-child(2) { transform: rotateY(90deg)  translateZ(105px); }
+    .g3d-ring img:nth-child(3) { transform: rotateY(180deg) translateZ(105px); }
+    .g3d-ring img:nth-child(4) { transform: rotateY(270deg) translateZ(105px); }
+    .connect-row { flex-direction: column; align-items: stretch; }
+    .connect-row a { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <a href="#top" class="logo">
+    <span class="avatar"><img src="images/topleft.jpg" alt=""></span>
+    <span class="name">EditorMuhamad</span>
+  </a>
+  <div class="head-right">
+    <nav class="dock" aria-label="Main navigation">
+      <a href="#work" aria-label="Work" title="Work"><img src="images/work.jpg" alt="Work"></a>
+      <a href="#about" aria-label="About" title="About"><img src="images/about.jpg" alt="About"></a>
+      <a href="#connect" aria-label="Connect" title="Connect"><img src="images/connect.jpg" alt="Connect"></a>
+    </nav>
+    <button class="mode-switch" id="modeSwitch" role="switch" aria-checked="false" aria-label="Switch between black and white background">
+      <span class="knob"></span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="orbit" aria-label="EditorMuhamad's avatar surrounded by his tools">
+
+      <div class="face-circle">
+        <img src="images/icons/avatar.png" alt="EditorMuhamad's avatar">
+      </div>
+
+      <!-- Figma -->
+      <div class="app figma" title="Figma">
+        <img src="images/icons/figma.png" alt="Figma">
+      </div>
+
+      <!-- After Effects -->
+      <div class="app ae" title="After Effects">
+        <img src="images/icons/ae.png" alt="After Effects">
+      </div>
+
+      <!-- CapCut -->
+      <div class="app capcut" title="CapCut">
+        <img src="images/icons/capcut.png" alt="CapCut">
+      </div>
+
+      <!-- Blender -->
+      <div class="app blender" title="Blender">
+        <img src="images/icons/blender.png" alt="Blender">
+      </div>
+
+      <!-- Calendar -->
+      <div class="app cal" title="Today">
+        <img src="images/icons/cal.png" alt="Calendar">
+      </div>
+
+      <!-- Cinema 4D -->
+      <div class="app c4d" title="Cinema 4D">
+        <img src="images/icons/c4d.png" alt="Cinema 4D">
+      </div>
+
+      <!-- Premiere Pro -->
+      <div class="app pr" title="Premiere Pro">
+        <img src="images/icons/pr.png" alt="Premiere Pro">
+      </div>
+
+    </div>
+
+    <div class="hero-text">
+      <span class="label">Motion Designer &middot; Editor</span>
+      <h1 class="anim-text"><span class="line1">I make brands <span class="hl-purple">move</span>.</span><span class="line2">Every frame, <span class="hl-purple">on purpose</span>.</span></h1>
+      <p>Brand animation, 3D and short-form edits: designed in Figma, animated in After Effects, rendered in Cinema 4D and Blender, cut in Premiere Pro and CapCut.</p>
+    </div>
+
+    <div class="scroll-cue">Scroll</div>
+  </section>
+
+  <!-- WORK -->
+  <section id="work">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="anim-text">Recent <span class="hl-purple">projects</span></h2>
+      </div>
+
+      <div class="work-list">
+        <div class="work-item reveal">
+          <div class="work-video">
+            <video src="videos/work-05.mp4" poster="videos/cover-05.png" muted loop playsinline preload="metadata"></video>
+            <span class="vplay"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg></span>
+            <button class="vmute" aria-label="Toggle sound">
+              <svg class="off" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.6 3 2.7-2.7-1.4-1.4-2.7 2.7-2.7-2.7-1.4 1.4 2.7 2.7-2.7 2.7 1.4 1.4 2.7-2.7 2.7 2.7 1.4-1.4-2.7-2.7z"/></svg>
+              <svg class="on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-.9 7-4.5 7-8.8s-3-7.9-7-8.8z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="work-item reveal">
+          <div class="work-video">
+            <video src="videos/work-01.mp4" poster="videos/cover-01.png" muted loop playsinline preload="metadata"></video>
+            <span class="vplay"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg></span>
+            <button class="vmute" aria-label="Toggle sound">
+              <svg class="off" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.6 3 2.7-2.7-1.4-1.4-2.7 2.7-2.7-2.7-1.4 1.4 2.7 2.7-2.7 2.7 1.4 1.4 2.7-2.7 2.7 2.7 1.4-1.4-2.7-2.7z"/></svg>
+              <svg class="on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-.9 7-4.5 7-8.8s-3-7.9-7-8.8z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="work-item reveal">
+          <div class="work-video">
+            <video src="videos/work-02.mp4" poster="videos/cover-02.png" muted loop playsinline preload="metadata"></video>
+            <span class="vplay"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg></span>
+            <button class="vmute" aria-label="Toggle sound">
+              <svg class="off" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.6 3 2.7-2.7-1.4-1.4-2.7 2.7-2.7-2.7-1.4 1.4 2.7 2.7-2.7 2.7 1.4 1.4 2.7-2.7 2.7 2.7 1.4-1.4-2.7-2.7z"/></svg>
+              <svg class="on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-.9 7-4.5 7-8.8s-3-7.9-7-8.8z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="work-item reveal">
+          <div class="work-video">
+            <video src="videos/work-03.mp4" poster="videos/cover-03.png" muted loop playsinline preload="metadata"></video>
+            <span class="vplay"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg></span>
+            <button class="vmute" aria-label="Toggle sound">
+              <svg class="off" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.6 3 2.7-2.7-1.4-1.4-2.7 2.7-2.7-2.7-1.4 1.4 2.7 2.7-2.7 2.7 1.4 1.4 2.7-2.7 2.7 2.7 1.4-1.4-2.7-2.7z"/></svg>
+              <svg class="on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-.9 7-4.5 7-8.8s-3-7.9-7-8.8z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="work-item reveal">
+          <div class="work-video">
+            <video src="videos/work-04.mp4" poster="videos/cover-04.png" muted loop playsinline preload="metadata"></video>
+            <span class="vplay"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg></span>
+            <button class="vmute" aria-label="Toggle sound">
+              <svg class="off" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.6 3 2.7-2.7-1.4-1.4-2.7 2.7-2.7-2.7-1.4 1.4 2.7 2.7-2.7 2.7 1.4 1.4 2.7-2.7 2.7 2.7 1.4-1.4-2.7-2.7z"/></svg>
+              <svg class="on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-.9 7-4.5 7-8.8s-3-7.9-7-8.8z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENTS -->
+  <!-- WHY WORK WITH ME -->
+  <section id="why">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="anim-text">Why you should <span class="hl-purple">work with me</span></h2>
+      </div>
+      <div class="why-grid">
+        <div class="gallery3d reveal" aria-label="Rotating gallery of project covers">
+          <div class="g3d-ring">
+            <img src="videos/cover-01.png" alt="Project cover 1">
+            <img src="videos/cover-02.png" alt="Project cover 2">
+            <img src="videos/cover-03.png" alt="Project cover 3">
+            <img src="videos/cover-04.png" alt="Project cover 4">
+          </div>
+        </div>
+        <div class="why-text reveal">
+          <ul>
+            <li><strong>One person, one pipeline.</strong> Design, animation and the final cut all happen in one place, so nothing gets lost in a handoff.</li>
+            <li><strong>Motion-first thinking.</strong> Every frame is built to stop the scroll, not just to look pretty.</li>
+            <li><strong>Fast, dependable turnarounds.</strong> The deadline is part of the brief.</li>
+            <li><strong>Six tools, one language.</strong> From Figma boards to Blender renders, the craft stays consistent.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENTS -->
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="label">About</span>
+        <h2 class="anim-text">Design that <span class="hl-purple">doesn't sit still</span></h2>
+      </div>
+      <div class="about-grid reveal">
+        <div class="about-photo"><img src="images/topleft.jpg" alt="EditorMuhamad's avatar"></div>
+        <div class="about-text">
+          <p>I'm <strong>EditorMuhamad</strong>, a motion designer and editor. What started as messing around with keyframes is now a full-time craft spanning brand animation, 3D and short-form edits.</p>
+          <p>I care about the <span class="hl-purple">two seconds</span> before someone decides to keep watching. That's where my work lives.</p>
+          <div class="tool-row">
+            <span class="pill">After Effects</span>
+            <span class="pill">Premiere Pro</span>
+            <span class="pill">Cinema 4D</span>
+            <span class="pill">Blender</span>
+            <span class="pill">Figma</span>
+            <span class="pill">CapCut</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENTS -->
+  <section id="clients">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="anim-text">Projects I've <span class="hl-purple">worked with</span></h2>
+      </div>
+      <div class="client-grid reveal">
+        <a href="https://x.com/Vauchly" target="_blank" rel="noopener" class="client-logo" aria-label="Vauchly">
+          <svg viewBox="0 0 32 24"><path d="M18.7649 23.8783H10.8538L0 9.02067L6.56049 4.29326C8.69908 7.30015 13.1982 13.5358 14.0858 14.4234C16.5459 8.58652 23.6371 1.88132 27.2067 0C28.1715 1.64012 31.0658 5.83691 31.5 6.65697C29.6187 7.86294 23.0582 11.915 18.7649 23.8783Z" fill="currentColor"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- CONNECT -->
+<footer id="connect">
+  <span class="label">Let's Connect</span>
+  <h2 class="anim-text">Got a <span class="hl-purple">project</span> in mind?</h2>
+  <p class="hello">Thanks for stopping by!<br>Tell me what you're building and I'll bring the motion.</p>
+  <div class="connect-row">
+    <a href="https://x.com/EditorMuhamad" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M13.7 10.6 20.6 3h-1.9l-6 6.9L7.9 3H2.4l7.3 10.6L2.4 21h1.9l6.4-7.3L16 21h5.5l-7.8-10.4Zm-2.3 2.6-.7-1L4.6 4.3h2.4L11.9 11l.7 1 5.5 7.8h-2.4l-5.3-6.6Z"/></svg>
+      X / Twitter
+    </a>
+    <a href="https://t.me/Mu_hammed3" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M21.9 4.6 18.6 20c-.2 1-.9 1.2-1.8.8l-5-3.7-2.4 2.3c-.3.3-.5.5-1 .5l.4-5.1L18 6.4c.4-.4-.1-.6-.6-.2l-11.5 7.2-5-1.5c-1.1-.3-1.1-1.1.2-1.6L20.4 3c.9-.3 1.7.2 1.5 1.6z"/></svg>
+      DM for bookings
+    </a>
+  </div>
+  <button class="to-top" id="toTop" aria-label="Back to top">
+    <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+  <p class="fine">&copy; <span id="year"></span> EDITORMUHAMAD &middot; MOTION IS THE MESSAGE</p>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // back to top — fixed bottom-right, appears once you scroll
+  const toTop = document.getElementById('toTop');
+  toTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  window.addEventListener('scroll', () => {
+    toTop.classList.toggle('show', window.scrollY > window.innerHeight * 0.6);
+  }, { passive: true });
+
+  // black / white switch
+  const modeSwitch = document.getElementById('modeSwitch');
+  function setMode(mode) {
+    document.documentElement.setAttribute('data-mode', mode);
+    modeSwitch.setAttribute('aria-checked', mode === 'light');
+    localStorage.setItem('em-mode', mode);
+  }
+  modeSwitch.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-mode') || 'dark';
+    setMode(current === 'dark' ? 'light' : 'dark');
+  });
+  const savedMode = localStorage.getItem('em-mode');
+  if (savedMode) setMode(savedMode);
+
+  // reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // masked word-rise animation: wrap every word in a masked span, stagger the delays
+  function splitWords(el) {
+    let idx = 0;
+    (function walk(node) {
+      [...node.childNodes].forEach(child => {
+        if (child.nodeType === Node.TEXT_NODE) {
+          const frag = document.createDocumentFragment();
+          child.textContent.split(/(\s+)/).forEach(part => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            const mask = document.createElement('span');
+            mask.className = 'w';
+            const word = document.createElement('span');
+            word.textContent = part;
+            word.style.setProperty('--d', (idx++ * 0.07) + 's');
+            mask.appendChild(word);
+            frag.appendChild(mask);
+          });
+          node.replaceChild(frag, child);
+        } else if (child.nodeType === Node.ELEMENT_NODE && child.tagName !== 'BR') {
+          walk(child);
+        }
+      });
+    })(el);
+  }
+
+  const animTexts = document.querySelectorAll('.anim-text');
+  animTexts.forEach(splitWords);
+
+  const textIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); textIO.unobserve(e.target); } });
+  }, { threshold: 0.4 });
+  animTexts.forEach(el => textIO.observe(el));
+
+  // hover-to-play videos: cover at rest, play while the cursor is on the video
+  document.querySelectorAll('.work-video').forEach(box => {
+    const video = box.querySelector('video');
+    const mute = box.querySelector('.vmute');
+
+    box.addEventListener('mouseenter', () => {
+      video.play();
+      box.classList.add('playing');
+    });
+    box.addEventListener('mouseleave', () => {
+      video.pause();
+      video.currentTime = 0;
+      video.muted = true;
+      box.classList.remove('playing', 'sound');
+    });
+
+    // tap-to-play for touch screens (no hover there)
+    box.addEventListener('touchstart', () => {
+      if (video.paused) { video.play(); box.classList.add('playing'); }
+      else { video.pause(); box.classList.remove('playing'); }
+    }, { passive: true });
+
+    mute.addEventListener('click', (e) => {
+      e.stopPropagation();
+      video.muted = !video.muted;
+      box.classList.toggle('sound', !video.muted);
+    });
+  });
+</script>
+
+</body>
+</html>
