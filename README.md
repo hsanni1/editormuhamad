@@ -39,3 +39,7 @@ The site is hosted on Vercel as a static site. To deploy from this folder:
 ```sh
 vercel --prod
 ```
+
+## License
+
+The code is under the [MIT License](LICENSE). The videos, images and logos in `images/` and `videos/` belong to EditorMuhamad or their respective owners and are not covered by that license.
