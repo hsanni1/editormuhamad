@@ -11,7 +11,7 @@ Portfolio site for EditorMuhamad, a motion designer who does brand animation, 3D
 - **Why:** reasons to work together
 - **About:** background and tools (After Effects, Premiere Pro, Blender, Cinema 4D, Figma, CapCut)
 - **Clients:** brands worked with
-- **Contact:** call to action and booking link
+- **Contact:** call to action with links to Telegram and X
 
 ## Tech
 
