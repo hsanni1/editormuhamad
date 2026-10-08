@@ -270,6 +270,7 @@
     aspect-ratio: 16/9;
     transition: transform .4s cubic-bezier(.2,.8,.2,1), border-color .3s ease;
   }
+  .work-video.portrait { aspect-ratio: 430/500; max-width: 480px; margin: 0 auto; }
   .work-video:hover { transform: scale(1.01); border-color: var(--line-strong); }
   .work-video video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .work-video .vplay {
@@ -517,6 +518,17 @@
       </div>
 
       <div class="work-list">
+        <div class="work-item reveal">
+          <div class="work-video portrait">
+            <video src="videos/work-06.mp4" poster="videos/cover-06.png" muted loop playsinline preload="metadata"></video>
+            <span class="vplay"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg></span>
+            <button class="vmute" aria-label="Toggle sound">
+              <svg class="off" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.6 3 2.7-2.7-1.4-1.4-2.7 2.7-2.7-2.7-1.4 1.4 2.7 2.7-2.7 2.7 1.4 1.4 2.7-2.7 2.7 2.7 1.4-1.4-2.7-2.7z"/></svg>
+              <svg class="on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-.9 7-4.5 7-8.8s-3-7.9-7-8.8z"/></svg>
+            </button>
+          </div>
+        </div>
+
         <div class="work-item reveal">
           <div class="work-video">
             <video src="videos/work-05.mp4" poster="videos/cover-05.png" muted loop playsinline preload="metadata"></video>
