@@ -16,7 +16,9 @@
     *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   }
   body { margin: 0; }
-  html, body { overflow-x: hidden; }
+  html, body { overflow-x: clip; }
+  html { scrollbar-width: none; }
+  html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
   img, svg { display: block; max-width: 100%; }
   button { font: inherit; cursor: pointer; }
   a { color: inherit; text-decoration: none; }
@@ -97,6 +99,19 @@
   }
   .logo .avatar img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; }
 
+  .logo .name {
+    background: linear-gradient(110deg, var(--white) 0%, var(--white) 40%, var(--accent) 48%, #FFFFFF 50%, var(--accent) 52%, var(--white) 60%, var(--white) 100%);
+    background-size: 250% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: name-shine 3.5s ease-in-out infinite;
+  }
+  @keyframes name-shine {
+    0%   { background-position: 100% 0; }
+    60%, 100% { background-position: 0% 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { .logo .name { animation: none; } }
+
   .head-right { display: flex; align-items: center; gap: .9rem; }
 
   /* dock widget — rounded app tiles in a pill, like the reference */
@@ -165,9 +180,11 @@
     width: 62%; aspect-ratio: 1; border-radius: 50%;
     overflow: hidden;
   }
+  .face-circle { background: #E1DAFC; }
   .face-circle img {
     width: 100%; height: 100%;
     object-fit: cover;
+    transform: scale(1.08);
   }
 
   .app {
@@ -182,6 +199,14 @@
     will-change: transform;
   }
   .app img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cal-tile {
+    width: 100%; height: 100%; container-type: inline-size;
+    background: #1C1C1E;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    line-height: 1; font-family: var(--sans);
+  }
+  .cal-tile .cal-day { color: #FF453A; font-size: 19cqw; font-weight: 600; letter-spacing: .04em; }
+  .cal-tile .cal-date { color: #FFFFFF; font-size: 50cqw; font-weight: 300; margin-top: 4cqw; }
 
   /* positions around the face, matching the reference artwork */
   .app.figma   { top: 2%;   left: 26%; --dur: 4.6s; --delay: -1.2s; }
@@ -225,7 +250,7 @@
 
   /* ============ SECTIONS ============ */
   section { padding: clamp(4.5rem, 10vw, 8rem) 0; }
-  .section-head { margin-bottom: 3rem; }
+  .section-head { margin-bottom: 1.25rem; }
   .section-head .label { display: block; margin-bottom: .8rem; }
   .section-head h2 {
     margin: 0; font-size: clamp(1.5rem, 3.4vw, 2.2rem);
@@ -249,6 +274,34 @@
   .work-list { display: flex; flex-direction: column; align-items: center; gap: 2.5rem; }
   .work-item { width: 100%; }
 
+  /* ============ NEW PROJECTS ============ */
+  #new { padding-bottom: 0; }
+  .new-row {
+    display: flex; gap: 1rem;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .new-row::-webkit-scrollbar { display: none; }
+  .new-item { flex: 0 0 auto; scroll-snap-align: start; }
+  .work-video.mini { --h: 200px; height: var(--h); width: calc(var(--h) * var(--ar, 1)); aspect-ratio: auto; }
+  .work-video.mini .vplay { width: 40px; height: 40px; }
+  .work-video.mini .vmute { width: 28px; height: 28px; bottom: .5rem; right: .5rem; }
+
+  .lightbox {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,.9); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lightbox[hidden] { display: none; }
+  .lightbox video { height: 86vh; width: auto; max-width: 92vw; object-fit: contain; border-radius: 12px; background: #000; }
+  .lightbox .lb-close {
+    position: absolute; top: 1.2rem; right: 1.2rem;
+    width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .lightbox .lb-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
   /* ============ CLIENTS ============ */
   .client-grid {
     display: flex; flex-wrap: wrap; align-items: center; gap: 1rem;
@@ -270,7 +323,6 @@
     aspect-ratio: 16/9;
     transition: transform .4s cubic-bezier(.2,.8,.2,1), border-color .3s ease;
   }
-  .work-video.portrait { aspect-ratio: 430/500; max-width: 480px; margin: 0 auto; }
   .work-video:hover { transform: scale(1.01); border-color: var(--line-strong); }
   .work-video video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .work-video .vplay {
@@ -295,6 +347,16 @@
   .work-video.playing .vmute { opacity: 1; }
   .work-video .vmute svg { width: 15px; height: 15px; fill: currentColor; }
   .work-video .vmute .on { display: none; }
+  .work-video .vexpand {
+    position: absolute; top: .4rem; right: .4rem;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(0,0,0,.55); backdrop-filter: blur(6px);
+    border: 1px solid var(--line-strong); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .3s ease;
+  }
+  .work-video .vexpand:hover { background: var(--accent); color: var(--black); }
+  .work-video .vexpand svg { width: 10px; height: 10px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
   .work-video.sound .vmute .on { display: block; }
   .work-video.sound .vmute .off { display: none; }
 
@@ -349,9 +411,13 @@
   .about-photo {
     width: 200px; aspect-ratio: 1; border-radius: 50%;
     background: var(--lavender); overflow: hidden;
-    display: flex; align-items: flex-end; justify-content: center;
+    position: relative;
   }
-  .about-photo img { width: 84%; height: 84%; object-fit: contain; mix-blend-mode: multiply; transform: translateY(5%); }
+  .about-photo img {
+    position: absolute; width: 170%; height: 170%; max-width: none;
+    left: -41.5%; top: -17.5%;
+    mix-blend-mode: multiply;
+  }
   .about-text p { color: var(--grey); margin: 0 0 1.1rem; max-width: 60ch; }
   .about-text p strong { color: var(--white); font-weight: 600; }
 
@@ -416,6 +482,7 @@
     .g3d-ring img:nth-child(3) { transform: rotateY(180deg) translateZ(160px); }
     .g3d-ring img:nth-child(4) { transform: rotateY(270deg) translateZ(160px); }
     .to-top { width: 46px; height: 46px; bottom: 1.1rem; right: 1.1rem; }
+    .work-video.mini { --h: 170px; }
   }
 
   @media (max-width: 480px) {
@@ -444,7 +511,7 @@
   </a>
   <div class="head-right">
     <nav class="dock" aria-label="Main navigation">
-      <a href="#work" aria-label="Work" title="Work"><img src="images/work.jpg" alt="Work"></a>
+      <a href="#new" aria-label="Work" title="Work"><img src="images/work.jpg" alt="Work"></a>
       <a href="#about" aria-label="About" title="About"><img src="images/about.jpg" alt="About"></a>
       <a href="#connect" aria-label="Connect" title="Connect"><img src="images/connect.jpg" alt="Connect"></a>
     </nav>
@@ -486,7 +553,7 @@
 
       <!-- Calendar -->
       <div class="app cal" title="Today">
-        <img src="images/icons/cal.png" alt="Calendar">
+        <div class="cal-tile" aria-label="Today's date"><span class="cal-day" id="calDay">MON</span><span class="cal-date" id="calDate">10</span></div>
       </div>
 
       <!-- Cinema 4D -->
@@ -510,18 +577,19 @@
     <div class="scroll-cue">Scroll</div>
   </section>
 
-  <!-- WORK -->
-  <section id="work">
+  <!-- NEW PROJECTS -->
+  <section id="new">
     <div class="wrap">
       <div class="section-head reveal">
-        <h2 class="anim-text">Recent <span class="hl-purple">projects</span></h2>
+        <h2 class="anim-text">New <span class="hl-purple">projects</span></h2>
       </div>
 
-      <div class="work-list">
-        <div class="work-item reveal">
-          <div class="work-video portrait">
-            <video src="videos/work-06.mp4" poster="videos/cover-06.png" muted loop playsinline preload="metadata"></video>
+      <div class="new-row">
+        <div class="new-item reveal">
+          <div class="work-video mini" style="--ar: 16/9">
+            <video src="videos/work-07.mp4" poster="videos/cover-07.png" muted loop playsinline preload="metadata"></video>
             <span class="vplay"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg></span>
+            <button class="vexpand" aria-label="Expand to full view"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
             <button class="vmute" aria-label="Toggle sound">
               <svg class="off" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.6 3 2.7-2.7-1.4-1.4-2.7 2.7-2.7-2.7-1.4 1.4 2.7 2.7-2.7 2.7 1.4 1.4 2.7-2.7 2.7 2.7 1.4-1.4-2.7-2.7z"/></svg>
               <svg class="on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-.9 7-4.5 7-8.8s-3-7.9-7-8.8z"/></svg>
@@ -529,6 +597,29 @@
           </div>
         </div>
 
+        <div class="new-item reveal">
+          <div class="work-video mini" style="--ar: 430/500">
+            <video src="videos/work-06.mp4" poster="videos/cover-06.png" muted loop playsinline preload="metadata"></video>
+            <span class="vplay"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5-11-6.5z"/></svg></span>
+            <button class="vexpand" aria-label="Expand to full view"><svg viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
+            <button class="vmute" aria-label="Toggle sound">
+              <svg class="off" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.6 3 2.7-2.7-1.4-1.4-2.7 2.7-2.7-2.7-1.4 1.4 2.7 2.7-2.7 2.7 1.4 1.4 2.7-2.7 2.7 2.7 1.4-1.4-2.7-2.7z"/></svg>
+              <svg class="on" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4v8c1.5-.7 2.5-2.2 2.5-4zM14 3.2v2.1c2.9.9 5 3.5 5 6.7s-2.1 5.8-5 6.7v2.1c4-.9 7-4.5 7-8.8s-3-7.9-7-8.8z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section id="work">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2 class="anim-text">Completed <span class="hl-purple">projects</span></h2>
+      </div>
+
+      <div class="work-list">
         <div class="work-item reveal">
           <div class="work-video">
             <video src="videos/work-05.mp4" poster="videos/cover-05.png" muted loop playsinline preload="metadata"></video>
@@ -678,8 +769,18 @@
   <p class="fine">&copy; <span id="year"></span> EDITORMUHAMAD &middot; MOTION IS THE MESSAGE</p>
 </footer>
 
+<div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Project video">
+  <button class="lb-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <video controls playsinline></video>
+</div>
+
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
+
+  // calendar tile shows today's date
+  const today = new Date();
+  document.getElementById('calDay').textContent = today.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+  document.getElementById('calDate').textContent = today.getDate();
 
   // back to top — fixed bottom-right, appears once you scroll
   const toTop = document.getElementById('toTop');
@@ -761,7 +862,8 @@
     });
 
     // tap-to-play for touch screens (no hover there)
-    box.addEventListener('touchstart', () => {
+    box.addEventListener('touchstart', (e) => {
+      if (e.target.closest('button')) return;
       if (video.paused) { video.play(); box.classList.add('playing'); }
       else { video.pause(); box.classList.remove('playing'); }
     }, { passive: true });
@@ -772,6 +874,34 @@
       box.classList.toggle('sound', !video.muted);
     });
   });
+
+  // expand a new project to full view
+  const lightbox = document.getElementById('lightbox');
+  const lbVideo = lightbox.querySelector('video');
+  function closeLightbox() {
+    lbVideo.pause();
+    lbVideo.removeAttribute('src');
+    lbVideo.load();
+    lightbox.hidden = true;
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.vexpand').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const box = btn.closest('.work-video');
+      const video = box.querySelector('video');
+      video.pause();
+      box.classList.remove('playing', 'sound');
+      lbVideo.src = video.getAttribute('src');
+      lbVideo.poster = video.getAttribute('poster') || '';
+      lightbox.hidden = false;
+      document.body.style.overflow = 'hidden';
+      lbVideo.play();
+    });
+  });
+  lightbox.querySelector('.lb-close').addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !lightbox.hidden) closeLightbox(); });
 </script>
 
 </body>
